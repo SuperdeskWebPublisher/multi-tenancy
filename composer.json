@@ -18,12 +18,6 @@
         "phpspec/phpspec": "^2.4",
         "phpcr/phpcr-utils": "^1.2"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/takeit/common"
-        }
-    ],
     "suggest": {
         "phpcr/phpcr-utils": "When using Tenant Aware Path Builder"
     },
