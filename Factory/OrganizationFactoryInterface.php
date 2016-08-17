@@ -13,20 +13,15 @@
  */
 namespace SWP\Component\MultiTenancy\Factory;
 
-use SWP\Component\MultiTenancy\Model\TenantInterface;
+use SWP\Component\MultiTenancy\Model\OrganizationInterface;
 use SWP\Component\Storage\Factory\FactoryInterface;
 
-/**
- * Interface TenantFactoryInterface.
- */
-interface TenantFactoryInterface extends FactoryInterface
+interface OrganizationFactoryInterface extends FactoryInterface
 {
     /**
-     * Creates a new tenant for given organization code.
+     * Creates a new organization with code.
      *
-     * @param string $code
-     *
-     * @return TenantInterface
+     * @return OrganizationInterface
      */
-    public function createForOrganization($code);
+    public function createWithCode();
 }

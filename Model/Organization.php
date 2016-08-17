@@ -3,21 +3,23 @@
 /**
  * This file is part of the Superdesk Web Publisher MultiTenancy Component.
  *
- * Copyright 2015 Sourcefabric z.u. and contributors.
+ * Copyright 2016 Sourcefabric z.ú. and contributors.
  *
  * For the full copyright and license information, please see the
  * AUTHORS and LICENSE files distributed with this source code.
  *
- * @copyright 2015 Sourcefabric z.ú.
+ * @copyright 2016 Sourcefabric z.ú.
  * @license http://www.superdesk.org/license
  */
 namespace SWP\Component\MultiTenancy\Model;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use SWP\Component\Common\Model\EnableableTrait;
 use SWP\Component\Common\Model\SoftDeletableTrait;
 use SWP\Component\Common\Model\TimestampableTrait;
 
-class Tenant implements TenantInterface
+class Organization implements OrganizationInterface
 {
     use SoftDeletableTrait, TimestampableTrait, EnableableTrait;
 
@@ -25,11 +27,6 @@ class Tenant implements TenantInterface
      * @var mixed
      */
     protected $id;
-
-    /**
-     * @var string
-     */
-    protected $subdomain;
 
     /**
      * @var string
@@ -42,16 +39,17 @@ class Tenant implements TenantInterface
     protected $code;
 
     /**
-     * @var OrganizationInterface
+     * @var Collection|TenantInterface[]
      */
-    protected $organization;
+    protected $tenants;
 
     /**
-     * Tenant constructor.
+     * Organization constructor.
      */
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->tenants = new ArrayCollection();
     }
 
     /**
@@ -68,22 +66,6 @@ class Tenant implements TenantInterface
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSubdomain()
-    {
-        return $this->subdomain;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setSubdomain($subdomain)
-    {
-        $this->subdomain = $subdomain;
     }
 
     /**
@@ -116,7 +98,7 @@ class Tenant implements TenantInterface
     public function setCode($code)
     {
         if (null !== $this->code) {
-            throw new \LogicException('Tenant\'s code is already set. Can not change it.');
+            throw new \LogicException('The code is already set. Can not change it.');
         }
 
         $this->code = $code;
@@ -125,24 +107,36 @@ class Tenant implements TenantInterface
     /**
      * {@inheritdoc}
      */
-    public function setOrganization(OrganizationInterface $organization)
+    public function getTenants()
     {
-        $this->organization = $organization;
+        return $this->tenants;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getOrganization()
+    public function hasTenant(TenantInterface $tenant)
     {
-        return $this->organization;
+        return $this->tenants->contains($tenant);
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    public function __toString()
+    public function addTenant(TenantInterface $tenant)
     {
-        return (string) $this->subdomain;
+        if (!$this->hasTenant($tenant)) {
+            $this->tenants->add($tenant);
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function removeTenant(TenantInterface $tenant)
+    {
+        if ($this->hasTenant($tenant)) {
+            $this->tenants->removeElement($tenant);
+        }
     }
 }
